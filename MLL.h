@@ -2,21 +2,26 @@
 #define MLL_H
 
 #include <iostream>
+#include <string>
+#include <cstddef>
 using namespace std;
 
 #define Nil NULL
 
-// JENIS KEJADIAN
 const string GOL            = "GOL";
 const string ASSIST         = "ASSIST";
 const string KARTU_KUNING   = "KARTU KUNING";
 const string KARTU_MERAH    = "KARTU MERAH";
 const string GOL_BUNUH_DIRI = "GOL BUNUH DIRI";
 
-// CUCU : KEJADIAN
+enum HasilInsert { INSERT_OK, ID_KEMBAR, NOMOR_KEMBAR, TIM_SAMA };
+
+enum HasilKejadian { KEJADIAN_OK, MENIT_TIDAK_VALID, KEJADIAN_KEMBAR, PEMAIN_SUDAH_KELUAR,
+                     MERAH_GANDA, KUNING_PENUH, ASSIST_TANPA_GOL, KARTU_BENTROK };
+
 struct infoKejadian {
-    int menit;      // 1 - 120
-    string jenis;   // salah satu konstanta di atas
+    int menit;
+    string jenis;
 };
 
 typedef struct elmKejadian *adrKejadian;
@@ -31,18 +36,17 @@ struct ListKejadian {
     adrKejadian last;
 };
 
-// ANAK : PEMAIN
 struct infoPemain {
     int noPunggung;
     string nama;
-    string posisi;  // GK / DF / MF / FW
-    char tim;       // 'H' = tim home, 'A' = tim away
+    string posisi;
+    char tim;
 };
 
 typedef struct elmPemain *adrPemain;
 struct elmPemain {
     infoPemain info;
-    ListKejadian lKejadian;      // list kejadian milik pemain ini
+    ListKejadian lKejadian;
     adrPemain next;
     adrPemain prev;
 };
@@ -52,7 +56,6 @@ struct ListPemain {
     adrPemain last;
 };
 
-// INDUK : PERTANDINGAN
 struct infoPertandingan {
     string idMatch;
     string timHome;
@@ -64,7 +67,7 @@ struct infoPertandingan {
 typedef struct elmPertandingan *adrPertandingan;
 struct elmPertandingan {
     infoPertandingan info;
-    ListPemain lPemain;          // list pemain milik pertandingan ini
+    ListPemain lPemain;
     adrPertandingan next;
     adrPertandingan prev;
 };
@@ -74,7 +77,6 @@ struct ListPertandingan {
     adrPertandingan last;
 };
 
-// LIST
 void createList(ListPertandingan &L);
 void createListPemain(ListPemain &LP);
 void createListKejadian(ListKejadian &LK);
@@ -82,43 +84,45 @@ bool isEmpty(ListPertandingan L);
 bool isEmptyPemain(ListPemain LP);
 bool isEmptyKejadian(ListKejadian LK);
 
-// OPERASI PARENT (WAJIB)
 adrPertandingan createParent(infoPertandingan data);
-void insertParent(ListPertandingan &L, adrPertandingan P);
+HasilInsert insertParent(ListPertandingan &L, adrPertandingan P);
 void deleteParent(ListPertandingan &L, adrPertandingan P);
 adrPertandingan findParent(ListPertandingan L, string idMatch);
 void printParent(ListPertandingan L);
+void printParentTim(ListPertandingan L, string tim);
 
-// OPERASI CHILD (WAJIB)
 adrPemain createChild(infoPemain data);
-void insertChild(adrPertandingan P, adrPemain C);
-void deleteChild(adrPertandingan P, adrPemain C);
+HasilInsert insertChild(adrPertandingan P, adrPemain C);
+int deleteChild(adrPertandingan P, adrPemain C);
 adrPemain findChild(adrPertandingan P, char tim, int noPunggung);
+adrPemain findChildNama(adrPertandingan P, string nama);
 void printChild(adrPertandingan P);
 
-// OPERASI KEJADIAN (CUCU)
 adrKejadian createKejadian(infoKejadian data);
 void insertKejadian(adrPemain C, adrKejadian K);
-void deleteKejadian(adrPemain C, adrKejadian K);
+int deleteKejadian(adrPertandingan P, adrPemain C, adrKejadian K);
 adrKejadian findKejadian(adrPemain C, int menit, string jenis);
+adrKejadian findKejadianKe(adrPemain C, int urutan);
 void printKejadian(adrPemain C);
 
-// TAMPILKAN SEMUA (WAJIB)
 void printAll(ListPertandingan L);
 
-// FITUR TAMBAHAN
 void printSatuParent(adrPertandingan P);
 string namaTim(adrPertandingan P, char tim);
 int hitungJumlahPemain(adrPertandingan P);
 int hitungJenisKejadian(adrPemain C, string jenis);
 void hitungSkor(adrPertandingan P, int &skorHome, int &skorAway);
 int menitKartuMerah(adrPemain C);
-bool tambahKejadian(adrPemain C, infoKejadian data, string &pesan);
+int menitKeluar(adrPemain C);
+bool adaGolRekan(adrPertandingan P, adrPemain C, int menit);
+HasilKejadian tambahKejadian(adrPertandingan P, adrPemain C, infoKejadian data);
+int rapikanAssist(adrPertandingan P);
 void printLaporanPertandingan(adrPertandingan P);
-void cariPemainSemuaPertandingan(ListPertandingan L, string nama);
+void printTopScorer(adrPertandingan P);
+void printTimeline(adrPertandingan P);
+void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim);
 void hapusSemua(ListPertandingan &L);
 
-// UTILITAS
 string toLowerStr(string s);
 string intToStr(int x);
 

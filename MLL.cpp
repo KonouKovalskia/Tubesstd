@@ -1,8 +1,5 @@
-#include <iostream>
-using namespace std;
-#include "mll.h"
+#include "MLL.h"
 
-// UTILITAS
 string toLowerStr(string s) {
     for (int i = 0; i < (int)s.length(); i++) {
         if (s[i] >= 'A' && s[i] <= 'Z') {
@@ -25,7 +22,6 @@ string intToStr(int x) {
     return hasil;
 }
 
-// LIST
 void createList(ListPertandingan &L) {
     L.first = Nil;
     L.last = Nil;
@@ -53,20 +49,22 @@ bool isEmptyKejadian(ListKejadian LK) {
     return LK.first == Nil;
 }
 
-// OPERASI PARENT : PERTANDINGAN
 adrPertandingan createParent(infoPertandingan data) {
     adrPertandingan P = new elmPertandingan;
     P->info = data;
     P->next = Nil;
     P->prev = Nil;
-    createListPemain(P->lPemain);   // pertandingan baru belum punya pemain
+    createListPemain(P->lPemain);
     return P;
 }
 
-// Insert last pada Double Linked List
-void insertParent(ListPertandingan &L, adrPertandingan P) {
-    if (P == Nil) return;
-
+HasilInsert insertParent(ListPertandingan &L, adrPertandingan P) {
+    if (findParent(L, P->info.idMatch) != Nil) {
+        return ID_KEMBAR;
+    }
+    if (toLowerStr(P->info.timHome) == toLowerStr(P->info.timAway)) {
+        return TIM_SAMA;
+    }
     if (isEmpty(L)) {
         L.first = P;
         L.last = P;
@@ -75,9 +73,9 @@ void insertParent(ListPertandingan &L, adrPertandingan P) {
         L.last->next = P;
         L.last = P;
     }
+    return INSERT_OK;
 }
 
-// Menghapus semua kejadian milik seorang pemain, lalu pemain itu sendiri
 void dealokasiPemain(adrPemain C) {
     adrKejadian K = C->lKejadian.first;
     while (K != Nil) {
@@ -88,36 +86,31 @@ void dealokasiPemain(adrPemain C) {
     delete C;
 }
 
-// Mengeluarkan P dari list, lalu menghapus P beserta seluruh pemain & kejadiannya
 void deleteParent(ListPertandingan &L, adrPertandingan P) {
     if (isEmpty(L) || P == Nil) return;
 
-    // 1. Lepaskan P dari list (4 kemungkinan posisi)
-    if (P == L.first && P == L.last) {          // satu-satunya elemen
+    if (P == L.first && P == L.last) {
         L.first = Nil;
         L.last = Nil;
-    } else if (P == L.first) {                  // elemen pertama
+    } else if (P == L.first) {
         L.first = P->next;
         L.first->prev = Nil;
-    } else if (P == L.last) {                   // elemen terakhir
+    } else if (P == L.last) {
         L.last = P->prev;
         L.last->next = Nil;
-    } else {                                    // elemen di tengah
+    } else {
         P->prev->next = P->next;
         P->next->prev = P->prev;
     }
     P->next = Nil;
     P->prev = Nil;
 
-    // 2. Hapus seluruh anak (pemain) beserta kejadiannya milik P
     adrPemain C = P->lPemain.first;
     while (C != Nil) {
         adrPemain hapus = C;
         C = C->next;
         dealokasiPemain(hapus);
     }
-
-    // 3. Hapus P
     delete P;
 }
 
@@ -159,20 +152,36 @@ void printParent(ListPertandingan L) {
     }
 }
 
-// OPERASI CHILD : PEMAIN
+void printParentTim(ListPertandingan L, string tim) {
+    string t = toLowerStr(tim);
+    int jumlah = 0;
+    adrPertandingan P = L.first;
+    while (P != Nil) {
+        if (toLowerStr(P->info.timHome) == t || toLowerStr(P->info.timAway) == t) {
+            jumlah++;
+            cout << jumlah << ". ";
+            printSatuParent(P);
+        }
+        P = P->next;
+    }
+    if (jumlah == 0) {
+        cout << "Tim " << tim << " tidak ditemukan di pertandingan manapun." << endl;
+    }
+}
+
 adrPemain createChild(infoPemain data) {
     adrPemain C = new elmPemain;
     C->info = data;
     C->next = Nil;
     C->prev = Nil;
-    createListKejadian(C->lKejadian);   // pemain baru belum punya kejadian
+    createListKejadian(C->lKejadian);
     return C;
 }
 
-// Insert last pada list pemain (Double Linked List) milik pertandingan P
-void insertChild(adrPertandingan P, adrPemain C) {
-    if (P == Nil || C == Nil) return;
-
+HasilInsert insertChild(adrPertandingan P, adrPemain C) {
+    if (findChild(P, C->info.tim, C->info.noPunggung) != Nil) {
+        return NOMOR_KEMBAR;
+    }
     if (isEmptyPemain(P->lPemain)) {
         P->lPemain.first = C;
         P->lPemain.last = C;
@@ -181,44 +190,56 @@ void insertChild(adrPertandingan P, adrPemain C) {
         P->lPemain.last->next = C;
         P->lPemain.last = C;
     }
+    return INSERT_OK;
 }
 
-// Mengeluarkan C dari list pemain milik P, lalu menghapus C beserta kejadiannya
-void deleteChild(adrPertandingan P, adrPemain C) {
-    if (P == Nil || C == Nil || isEmptyPemain(P->lPemain)) return;
+int deleteChild(adrPertandingan P, adrPemain C) {
+    if (P == Nil || C == Nil || isEmptyPemain(P->lPemain)) return -1;
 
-    // pastikan C memang anggota list pemain milik P
     adrPemain Q = P->lPemain.first;
     while (Q != Nil && Q != C) {
         Q = Q->next;
     }
-    if (Q == Nil) return;                       // C bukan milik P, jangan ubah apa pun
+    if (Q == Nil) return -1;
 
     ListPemain &LP = P->lPemain;
-    if (C == LP.first && C == LP.last) {        // satu-satunya pemain
+    if (C == LP.first && C == LP.last) {
         LP.first = Nil;
         LP.last = Nil;
-    } else if (C == LP.first) {                 // pemain pertama
+    } else if (C == LP.first) {
         LP.first = C->next;
         LP.first->prev = Nil;
-    } else if (C == LP.last) {                  // pemain terakhir
+    } else if (C == LP.last) {
         LP.last = C->prev;
         LP.last->next = Nil;
-    } else {                                    // pemain di tengah
+    } else {
         C->prev->next = C->next;
         C->next->prev = C->prev;
     }
     C->next = Nil;
     C->prev = Nil;
     dealokasiPemain(C);
+    return rapikanAssist(P);
 }
 
-// Kunci pemain dalam satu pertandingan: tim (H/A) + nomor punggung
 adrPemain findChild(adrPertandingan P, char tim, int noPunggung) {
     if (P == Nil) return Nil;
     adrPemain C = P->lPemain.first;
     while (C != Nil) {
         if (C->info.tim == tim && C->info.noPunggung == noPunggung) {
+            return C;
+        }
+        C = C->next;
+    }
+    return Nil;
+}
+
+adrPemain findChildNama(adrPertandingan P, string nama) {
+    if (P == Nil) return Nil;
+    string n = toLowerStr(nama);
+    adrPemain C = P->lPemain.first;
+    while (C != Nil) {
+        if (toLowerStr(C->info.nama) == n) {
             return C;
         }
         C = C->next;
@@ -248,13 +269,16 @@ void printChild(adrPertandingan P) {
              << " | Gol: "    << hitungJenisKejadian(C, GOL)
              << ", Assist: "  << hitungJenisKejadian(C, ASSIST)
              << ", Kuning: "  << hitungJenisKejadian(C, KARTU_KUNING)
-             << ", Merah: "   << hitungJenisKejadian(C, KARTU_MERAH) << endl;
+             << ", Merah: "   << hitungJenisKejadian(C, KARTU_MERAH);
+        if (menitKeluar(C) != -1) {
+            cout << " | KELUAR menit " << menitKeluar(C);
+        }
+        cout << endl;
         C = C->next;
         no++;
     }
 }
 
-// OPERASI LIST KEJADIAN (CUCU)
 adrKejadian createKejadian(infoKejadian data) {
     adrKejadian K = new elmKejadian;
     K->info = data;
@@ -263,45 +287,34 @@ adrKejadian createKejadian(infoKejadian data) {
     return K;
 }
 
-// Insert terurut berdasarkan menit (ascending) pada Double Linked List kejadian
 void insertKejadian(adrPemain C, adrKejadian K) {
     if (C == Nil || K == Nil) return;
     ListKejadian &LK = C->lKejadian;
 
-    if (isEmptyKejadian(LK)) {                          // list kosong
+    if (isEmptyKejadian(LK)) {
         LK.first = K;
         LK.last = K;
-    } else if (K->info.menit < LK.first->info.menit) {  // insert first
+    } else if (K->info.menit < LK.first->info.menit) {
         K->next = LK.first;
         LK.first->prev = K;
         LK.first = K;
     } else {
-        // cari Prec: elemen terakhir yang menitnya <= menit K
         adrKejadian Prec = LK.first;
         while (Prec->next != Nil && Prec->next->info.menit <= K->info.menit) {
             Prec = Prec->next;
         }
-        // insert after Prec
         K->next = Prec->next;
         K->prev = Prec;
         if (Prec->next != Nil) {
             Prec->next->prev = K;
         } else {
-            LK.last = K;                                // K menjadi elemen terakhir
+            LK.last = K;
         }
         Prec->next = K;
     }
 }
 
-void deleteKejadian(adrPemain C, adrKejadian K) {
-    if (C == Nil || K == Nil || isEmptyKejadian(C->lKejadian)) return;
-
-    adrKejadian Q = C->lKejadian.first;
-    while (Q != Nil && Q != K) {
-        Q = Q->next;
-    }
-    if (Q == Nil) return;                       // K bukan milik C
-
+void lepasKejadian(adrPemain C, adrKejadian K) {
     ListKejadian &LK = C->lKejadian;
     if (K == LK.first && K == LK.last) {
         LK.first = Nil;
@@ -318,7 +331,20 @@ void deleteKejadian(adrPemain C, adrKejadian K) {
     }
     K->next = Nil;
     K->prev = Nil;
+}
+
+int deleteKejadian(adrPertandingan P, adrPemain C, adrKejadian K) {
+    if (P == Nil || C == Nil || K == Nil) return -1;
+
+    adrKejadian Q = C->lKejadian.first;
+    while (Q != Nil && Q != K) {
+        Q = Q->next;
+    }
+    if (Q == Nil) return -1;
+
+    lepasKejadian(C, K);
     delete K;
+    return rapikanAssist(P);
 }
 
 adrKejadian findKejadian(adrPemain C, int menit, string jenis) {
@@ -333,6 +359,17 @@ adrKejadian findKejadian(adrPemain C, int menit, string jenis) {
     return Nil;
 }
 
+adrKejadian findKejadianKe(adrPemain C, int urutan) {
+    if (C == Nil || urutan < 1) return Nil;
+    adrKejadian K = C->lKejadian.first;
+    int i = 1;
+    while (K != Nil && i < urutan) {
+        K = K->next;
+        i++;
+    }
+    return K;
+}
+
 void printKejadian(adrPemain C) {
     if (C == Nil) return;
     if (isEmptyKejadian(C->lKejadian)) {
@@ -340,13 +377,20 @@ void printKejadian(adrPemain C) {
         return;
     }
     adrKejadian K = C->lKejadian.first;
+    int no = 1;
+    int kuning = 0;
     while (K != Nil) {
-        cout << "        - " << K->info.menit << "' " << K->info.jenis << endl;
+        cout << "        " << no << ". " << K->info.menit << "' " << K->info.jenis;
+        if (K->info.jenis == KARTU_KUNING) {
+            kuning++;
+            if (kuning == 2) cout << " (kedua, pemain keluar)";
+        }
+        cout << endl;
         K = K->next;
+        no++;
     }
 }
 
-// TAMPILKAN SEMUA
 void printAll(ListPertandingan L) {
     if (isEmpty(L)) {
         cout << "Multi Linked List kosong, belum ada data pertandingan." << endl;
@@ -364,7 +408,11 @@ void printAll(ListPertandingan L) {
             adrPemain C = P->lPemain.first;
             while (C != Nil) {
                 cout << "  [" << C->info.tim << "] #" << C->info.noPunggung << " " << C->info.nama
-                     << " (" << C->info.posisi << ") - " << namaTim(P, C->info.tim) << endl;
+                     << " (" << C->info.posisi << ") - " << namaTim(P, C->info.tim);
+                if (menitKeluar(C) != -1) {
+                    cout << " [KELUAR menit " << menitKeluar(C) << "]";
+                }
+                cout << endl;
                 printKejadian(C);
                 C = C->next;
             }
@@ -374,7 +422,6 @@ void printAll(ListPertandingan L) {
     cout << "=============================================================" << endl;
 }
 
-// FITUR TAMBAHAN
 int hitungJumlahPemain(adrPertandingan P) {
     int jumlah = 0;
     if (P == Nil) return 0;
@@ -397,8 +444,6 @@ int hitungJenisKejadian(adrPemain C, string jenis) {
     return jumlah;
 }
 
-// Skor TIDAK disimpan, tetapi dihitung dengan traversal pemain & kejadian.
-// Gol biasa menambah skor tim pemain; gol bunuh diri menambah skor tim lawan.
 void hitungSkor(adrPertandingan P, int &skorHome, int &skorAway) {
     skorHome = 0;
     skorAway = 0;
@@ -419,7 +464,6 @@ void hitungSkor(adrPertandingan P, int &skorHome, int &skorAway) {
     }
 }
 
-// Mengembalikan menit kartu merah pemain, atau -1 jika belum pernah kartu merah
 int menitKartuMerah(adrPemain C) {
     if (C == Nil) return -1;
     adrKejadian K = C->lKejadian.first;
@@ -430,60 +474,97 @@ int menitKartuMerah(adrPemain C) {
     return -1;
 }
 
-/*
-    Menambah kejadian dengan aturan pertandingan:
-    1. Menit harus 1 - 120
-    2. Pemain yang sudah kartu merah tidak boleh punya kejadian setelah menit kartu merah
-    3. Pemain tidak boleh punya 2 kartu merah atau lebih dari 2 kartu kuning
-    4. Kartu kuning kedua otomatis menghasilkan kartu merah
-*/
-bool tambahKejadian(adrPemain C, infoKejadian data, string &pesan) {
-    if (C == Nil) {
-        pesan = "Pemain tidak valid.";
-        return false;
-    }
-    if (data.menit < 1 || data.menit > 120) {
-        pesan = "Ditolak: menit harus di antara 1 sampai 120.";
-        return false;
-    }
-
+int menitKeluar(adrPemain C) {
+    if (C == Nil) return -1;
     int merah = menitKartuMerah(C);
-    if (merah != -1 && data.menit > merah) {
-        pesan = "Ditolak: " + C->info.nama + " sudah diusir (kartu merah) pada menit " + intToStr(merah) + "'.";
-        return false;
-    }
-    if (data.jenis == KARTU_MERAH && merah != -1) {
-        pesan = "Ditolak: " + C->info.nama + " sudah memiliki kartu merah.";
-        return false;
-    }
-    if (data.jenis == KARTU_KUNING && hitungJenisKejadian(C, KARTU_KUNING) >= 2) {
-        pesan = "Ditolak: " + C->info.nama + " sudah memiliki 2 kartu kuning.";
-        return false;
-    }
-
-    insertKejadian(C, createKejadian(data));
-    pesan = "Kejadian " + data.jenis + " menit " + intToStr(data.menit) + "' berhasil ditambahkan.";
-
-    // Aturan kartu kuning kedua -> kartu merah otomatis
-    if (data.jenis == KARTU_KUNING && hitungJenisKejadian(C, KARTU_KUNING) == 2 && menitKartuMerah(C) == -1) {
-        // kartu merah diberikan pada menit kartu kuning yang lebih akhir
-        int menitKuningKedua = 0;
-        adrKejadian K = C->lKejadian.first;
-        while (K != Nil) {
-            if (K->info.jenis == KARTU_KUNING) menitKuningKedua = K->info.menit;
-            K = K->next;
+    int kuning = 0;
+    int kuningKedua = -1;
+    adrKejadian K = C->lKejadian.first;
+    while (K != Nil) {
+        if (K->info.jenis == KARTU_KUNING) {
+            kuning++;
+            if (kuning == 2) kuningKedua = K->info.menit;
         }
-        infoKejadian kartuMerah;
-        kartuMerah.menit = menitKuningKedua;
-        kartuMerah.jenis = KARTU_MERAH;
-        insertKejadian(C, createKejadian(kartuMerah));
-        pesan += "\nKartu kuning kedua! " + C->info.nama + " otomatis mendapat KARTU MERAH pada menit "
-                 + intToStr(menitKuningKedua) + "'.";
+        K = K->next;
     }
-    return true;
+    if (merah == -1) return kuningKedua;
+    if (kuningKedua == -1 || merah <= kuningKedua) return merah;
+    return kuningKedua;
 }
 
-// Bagian dari laporan: daftar gol untuk satu tim
+bool adaGolRekan(adrPertandingan P, adrPemain C, int menit) {
+    adrPemain Q = P->lPemain.first;
+    while (Q != Nil) {
+        if (Q != C && Q->info.tim == C->info.tim) {
+            adrKejadian K = Q->lKejadian.first;
+            while (K != Nil) {
+                if (K->info.jenis == GOL && K->info.menit == menit) return true;
+                K = K->next;
+            }
+        }
+        Q = Q->next;
+    }
+    return false;
+}
+
+int rapikanAssist(adrPertandingan P) {
+    int jumlah = 0;
+    adrPemain C = P->lPemain.first;
+    while (C != Nil) {
+        adrKejadian K = C->lKejadian.first;
+        while (K != Nil) {
+            adrKejadian berikut = K->next;
+            if (K->info.jenis == ASSIST && !adaGolRekan(P, C, K->info.menit)) {
+                lepasKejadian(C, K);
+                delete K;
+                jumlah++;
+            }
+            K = berikut;
+        }
+        C = C->next;
+    }
+    return jumlah;
+}
+
+HasilKejadian tambahKejadian(adrPertandingan P, adrPemain C, infoKejadian data) {
+    if (data.menit < 1 || data.menit > 120) {
+        return MENIT_TIDAK_VALID;
+    }
+    if (findKejadian(C, data.menit, data.jenis) != Nil) {
+        return KEJADIAN_KEMBAR;
+    }
+    int keluar = menitKeluar(C);
+    if (keluar != -1 && data.menit > keluar) {
+        return PEMAIN_SUDAH_KELUAR;
+    }
+    if (data.jenis == KARTU_MERAH && hitungJenisKejadian(C, KARTU_MERAH) >= 1) {
+        return MERAH_GANDA;
+    }
+    if (data.jenis == KARTU_KUNING && hitungJenisKejadian(C, KARTU_KUNING) >= 2) {
+        return KUNING_PENUH;
+    }
+    if (data.jenis == ASSIST && !adaGolRekan(P, C, data.menit)) {
+        return ASSIST_TANPA_GOL;
+    }
+
+    adrKejadian baru = createKejadian(data);
+    insertKejadian(C, baru);
+
+    keluar = menitKeluar(C);
+    if (keluar != -1) {
+        adrKejadian K = C->lKejadian.first;
+        while (K != Nil) {
+            if (K->info.menit > keluar) {
+                lepasKejadian(C, baru);
+                delete baru;
+                return KARTU_BENTROK;
+            }
+            K = K->next;
+        }
+    }
+    return KEJADIAN_OK;
+}
+
 void printGolTim(adrPertandingan P, char tim) {
     bool ada = false;
     adrPemain C = P->lPemain.first;
@@ -504,7 +585,6 @@ void printGolTim(adrPertandingan P, char tim) {
     if (!ada) cout << "    (tidak ada)" << endl;
 }
 
-// Bagian dari laporan: daftar kejadian dengan jenis tertentu (assist / kartu)
 void printDaftarJenis(adrPertandingan P, string jenis) {
     bool ada = false;
     adrPemain C = P->lPemain.first;
@@ -517,6 +597,23 @@ void printDaftarJenis(adrPertandingan P, string jenis) {
                 ada = true;
             }
             K = K->next;
+        }
+        C = C->next;
+    }
+    if (!ada) cout << "    (tidak ada)" << endl;
+}
+
+void printDaftarKeluar(adrPertandingan P) {
+    bool ada = false;
+    adrPemain C = P->lPemain.first;
+    while (C != Nil) {
+        int keluar = menitKeluar(C);
+        if (keluar != -1) {
+            string alasan = "dua kartu kuning";
+            if (menitKartuMerah(C) == keluar) alasan = "kartu merah";
+            cout << "    - " << C->info.nama << " (" << namaTim(P, C->info.tim) << ") "
+                 << keluar << "' (" << alasan << ")" << endl;
+            ada = true;
         }
         C = C->next;
     }
@@ -557,36 +654,128 @@ void printLaporanPertandingan(adrPertandingan P) {
     printDaftarJenis(P, ASSIST);
     cout << "  Kartu kuning:" << endl;
     printDaftarJenis(P, KARTU_KUNING);
-    cout << "  Kartu merah:" << endl;
-    printDaftarJenis(P, KARTU_MERAH);
+    cout << "  Pemain keluar:" << endl;
+    printDaftarKeluar(P);
     cout << "------------------------------------------------------" << endl;
     cout << "Pemain tercatat: " << pemainHome << " (" << P->info.timHome << "), "
          << pemainAway << " (" << P->info.timAway << ")" << endl;
     cout << "======================================================" << endl;
 }
 
-// Mencari pemain (berdasarkan nama) di SEMUA pertandingan dan merekap statistiknya
-void cariPemainSemuaPertandingan(ListPertandingan L, string nama) {
+void printTopScorer(adrPertandingan P) {
+    if (P == Nil) return;
+    int maks = 0;
+    adrPemain C = P->lPemain.first;
+    while (C != Nil) {
+        if (hitungJenisKejadian(C, GOL) > maks) {
+            maks = hitungJenisKejadian(C, GOL);
+        }
+        C = C->next;
+    }
+    if (maks == 0) {
+        cout << "Belum ada gol di pertandingan ini." << endl;
+        return;
+    }
+    cout << "Top scorer (" << maks << " gol):" << endl;
+    C = P->lPemain.first;
+    while (C != Nil) {
+        if (hitungJenisKejadian(C, GOL) == maks) {
+            cout << "  " << C->info.nama << " (#" << C->info.noPunggung << ", "
+                 << namaTim(P, C->info.tim) << ")" << endl;
+        }
+        C = C->next;
+    }
+}
+
+struct elmLini {
+    string nama;
+    int noPunggung;
+    char tim;
+    infoKejadian info;
+    elmLini *next;
+};
+
+int urutanJenis(string jenis) {
+    if (jenis == GOL || jenis == GOL_BUNUH_DIRI) return 0;
+    if (jenis == ASSIST) return 1;
+    if (jenis == KARTU_KUNING) return 2;
+    return 3;
+}
+
+bool urutSebelumAtauSama(infoKejadian a, infoKejadian b) {
+    if (a.menit != b.menit) return a.menit < b.menit;
+    return urutanJenis(a.jenis) <= urutanJenis(b.jenis);
+}
+
+void printTimeline(adrPertandingan P) {
+    if (P == Nil) return;
+    elmLini *first = Nil;
+    adrPemain C = P->lPemain.first;
+    while (C != Nil) {
+        adrKejadian K = C->lKejadian.first;
+        while (K != Nil) {
+            elmLini *n = new elmLini;
+            n->nama = C->info.nama;
+            n->noPunggung = C->info.noPunggung;
+            n->tim = C->info.tim;
+            n->info = K->info;
+            n->next = Nil;
+            if (first == Nil || !urutSebelumAtauSama(first->info, n->info)) {
+                n->next = first;
+                first = n;
+            } else {
+                elmLini *q = first;
+                while (q->next != Nil && urutSebelumAtauSama(q->next->info, n->info)) {
+                    q = q->next;
+                }
+                n->next = q->next;
+                q->next = n;
+            }
+            K = K->next;
+        }
+        C = C->next;
+    }
+    if (first == Nil) {
+        cout << "Belum ada kejadian di pertandingan ini." << endl;
+        return;
+    }
+    elmLini *q = first;
+    while (q != Nil) {
+        cout << "  " << q->info.menit << "'  " << q->info.jenis << "  " << q->nama
+             << " (#" << q->noPunggung << ", " << namaTim(P, q->tim) << ")" << endl;
+        elmLini *hapus = q;
+        q = q->next;
+        delete hapus;
+    }
+}
+
+void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim) {
     if (isEmpty(L)) {
         cout << "Belum ada data pertandingan." << endl;
         return;
     }
-    int totalMain = 0, totalGol = 0, totalAssist = 0, totalKuning = 0, totalMerah = 0;
+    int totalMain = 0, totalGol = 0, totalAssist = 0, totalKuning = 0, totalMerah = 0, totalKeluar = 0;
 
-    cout << "Rekap pemain \"" << nama << "\":" << endl;
+    cout << "Rekap pemain \"" << nama << "\" (" << tim << "):" << endl;
     adrPertandingan P = L.first;
     while (P != Nil) {
         adrPemain C = P->lPemain.first;
         while (C != Nil) {
-            if (toLowerStr(C->info.nama) == toLowerStr(nama)) {
+            if (toLowerStr(C->info.nama) == toLowerStr(nama) &&
+                toLowerStr(namaTim(P, C->info.tim)) == toLowerStr(tim)) {
                 int gol = hitungJenisKejadian(C, GOL);
                 int assist = hitungJenisKejadian(C, ASSIST);
                 int kuning = hitungJenisKejadian(C, KARTU_KUNING);
                 int merah = hitungJenisKejadian(C, KARTU_MERAH);
                 cout << "  [" << P->info.idMatch << "] " << P->info.timHome << " vs " << P->info.timAway
-                     << " (membela " << namaTim(P, C->info.tim) << ", #" << C->info.noPunggung << ")"
+                     << " (#" << C->info.noPunggung << ")"
                      << " | Gol: " << gol << ", Assist: " << assist
-                     << ", Kuning: " << kuning << ", Merah: " << merah << endl;
+                     << ", Kuning: " << kuning << ", Merah: " << merah;
+                if (menitKeluar(C) != -1) {
+                    cout << " | KELUAR menit " << menitKeluar(C);
+                    totalKeluar++;
+                }
+                cout << endl;
                 totalMain++;
                 totalGol += gol;
                 totalAssist += assist;
@@ -599,15 +788,14 @@ void cariPemainSemuaPertandingan(ListPertandingan L, string nama) {
     }
 
     if (totalMain == 0) {
-        cout << "  Pemain tidak ditemukan di pertandingan mana pun." << endl;
+        cout << "  Pemain tidak ditemukan di tim tersebut pada pertandingan mana pun." << endl;
     } else {
         cout << "  TOTAL: " << totalMain << " pertandingan, " << totalGol << " gol, "
              << totalAssist << " assist, " << totalKuning << " kartu kuning, "
-             << totalMerah << " kartu merah" << endl;
+             << totalMerah << " kartu merah, keluar " << totalKeluar << " kali" << endl;
     }
 }
 
-// Menghapus seluruh data (dipanggil saat program selesai agar memori bersih)
 void hapusSemua(ListPertandingan &L) {
     while (!isEmpty(L)) {
         deleteParent(L, L.first);
