@@ -779,20 +779,21 @@ void printTimeline(adrPertandingan P) {
     }
 }
 
-void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim) {
+void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim, int noPunggung) {
     if (isEmpty(L)) {
         cout << "Belum ada data pertandingan." << endl;
         return;
     }
     int totalMain = 0, totalGol = 0, totalAssist = 0, totalKuning = 0, totalMerah = 0, totalKeluar = 0;
 
-    cout << "Rekap pemain \"" << nama << "\" (" << tim << "):" << endl;
+    cout << "Rekap pemain \"" << nama << "\" (#" << noPunggung << ", " << tim << "):" << endl;
     adrPertandingan P = L.first;
     while (P != Nil) {
         adrPemain C = P->lPemain.first;
         while (C != Nil) {
             if (toLowerStr(C->info.nama) == toLowerStr(nama) &&
-                toLowerStr(namaTim(P, C->info.tim)) == toLowerStr(tim)) {
+                toLowerStr(namaTim(P, C->info.tim)) == toLowerStr(tim) &&
+                C->info.noPunggung == noPunggung) {
                 int gol = hitungJenisKejadian(C, GOL);
                 int assist = hitungJenisKejadian(C, ASSIST);
                 int kuning = hitungJenisKejadian(C, KARTU_KUNING);

@@ -70,7 +70,4 @@ Dengan Code Blocks: buat project Console application C++ kosong, lalu tambahkan 
 - Pemain maksimal 1 kartu merah dan 2 kartu kuning. Kartu kuning kedua otomatis membuat pemain keluar, setara kartu merah.
 - Pemain yang sudah keluar tidak boleh punya kejadian setelah menit keluar. Kartu yang membuat pemain keluar sebelum kejadian yang sudah tercatat juga ditolak.
 - Menghapus gol atau pemain otomatis menghapus assist yang tidak lagi didukung gol.
-
-## Batasan
-
-- Rekap lintas pertandingan mengenali pemain dari nama dan nama tim. Dua pemain dengan nama dan tim yang sama akan tergabung.
+- Rekap lintas pertandingan mengenali pemain dari nama, nama tim, dan nomor punggung agar pemain bernama sama di tim yang sama tidak tergabung.

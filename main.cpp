@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include "MLL.h"
 
 string potong(string s) {
@@ -13,8 +12,7 @@ string inputString(string prompt) {
     string s;
     cout << prompt;
     if (!getline(cin, s)) {
-        cout << endl << "Input berakhir, program ditutup." << endl;
-        exit(0);
+        return "";
     }
     return potong(s);
 }
@@ -22,6 +20,7 @@ string inputString(string prompt) {
 string inputWajib(string prompt) {
     while (true) {
         string s = inputString(prompt);
+        if (!cin) return "";
         if (s != "") return s;
         cout << "Input tidak boleh kosong." << endl;
     }
@@ -51,6 +50,7 @@ bool keAngka(string s, int &hasil) {
 int inputInt(string prompt) {
     while (true) {
         string s = inputString(prompt);
+        if (!cin) return -1;
         int x;
         if (keAngka(s, x)) return x;
         cout << "Input harus berupa angka bulat." << endl;
@@ -92,6 +92,7 @@ bool tanggalValid(string t) {
 char inputTim() {
     while (true) {
         string s = toUpperStr(inputString("Tim (H = home / A = away): "));
+        if (!cin) return 'H';
         if (s == "H" || s == "A") return s[0];
         cout << "Pilih H atau A." << endl;
     }
@@ -106,6 +107,7 @@ string inputJenisKejadian() {
     cout << "  5. Gol bunuh diri" << endl;
     while (true) {
         int pilih = inputInt("Pilih (1-5): ");
+        if (!cin) return GOL;
         switch (pilih) {
             case 1: return GOL;
             case 2: return ASSIST;
@@ -264,6 +266,7 @@ void menuTambahPertandingan(ListPertandingan &L) {
         return;
     }
     d.stadion = inputWajib("Stadion: ");
+    if (!cin) return;
 
     adrPertandingan P = createParent(d);
     HasilInsert h = insertParent(L, P);
@@ -330,6 +333,7 @@ void menuTambahPemain(ListPertandingan &L) {
     }
     d.nama = inputWajib("Nama pemain: ");
     d.posisi = toUpperStr(inputWajib("Posisi (GK/DF/MF/FW): "));
+    if (!cin) return;
     if (!posisiValid(d.posisi)) {
         cout << "Gagal: posisi harus GK, DF, MF, atau FW." << endl;
         return;
@@ -408,6 +412,7 @@ void menuTambahKejadian(ListPertandingan &L) {
     infoKejadian d;
     d.menit = inputInt("Menit (1-120): ");
     d.jenis = inputJenisKejadian();
+    if (!cin) return;
 
     HasilKejadian h = tambahKejadian(P, C, d);
     tampilHasilKejadian(h, P, C, d);
@@ -458,7 +463,12 @@ void menuTopScorer(ListPertandingan L) {
 void menuRekapPemain(ListPertandingan L) {
     string nama = inputWajib("Nama pemain: ");
     string tim = inputWajib("Nama tim yang dibela: ");
-    cariPemainSemuaPertandingan(L, nama, tim);
+    int noPunggung = inputInt("No punggung (1-99): ");
+    if (noPunggung < 1 || noPunggung > 99) {
+        cout << "Gagal: nomor punggung harus 1 - 99." << endl;
+        return;
+    }
+    cariPemainSemuaPertandingan(L, nama, tim, noPunggung);
 }
 
 int main() {
@@ -492,6 +502,10 @@ int main() {
         cout << "  0. Keluar" << endl;
         cout << "===============================================" << endl;
         pilihan = inputInt("Pilih menu: ");
+        if (!cin) {
+            cout << endl << "Input berakhir, program ditutup." << endl;
+            break;
+        }
         cout << endl;
 
         switch (pilihan) {
@@ -513,6 +527,10 @@ int main() {
             case 16: isiDataContoh(L); break;
             case 0:  cout << "Terima kasih!" << endl; break;
             default: cout << "Menu tidak tersedia." << endl;
+        }
+        if (!cin) {
+            cout << endl << "Input berakhir, program ditutup." << endl;
+            break;
         }
         if (pilihan != 0) jeda();
     }

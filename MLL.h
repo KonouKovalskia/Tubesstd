@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <cstddef>
 using namespace std;
 
 #define Nil NULL
@@ -121,7 +120,7 @@ int rapikanAssist(adrPertandingan P);
 void printLaporanPertandingan(adrPertandingan P);
 void printTopScorer(adrPertandingan P);
 void printTimeline(adrPertandingan P);
-void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim);
+void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim, int noPunggung);
 void hapusSemua(ListPertandingan &L);
 
 string toLowerStr(string s);
