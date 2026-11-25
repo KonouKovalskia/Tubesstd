@@ -492,6 +492,25 @@ int menitKeluar(adrPemain C) {
     return kuningKedua;
 }
 
+int hitungKejadianTimMenit(adrPertandingan P, char tim, int menit, string jenis) {
+    if (P == Nil) return 0;
+    int jumlah = 0;
+    adrPemain Q = P->lPemain.first;
+    while (Q != Nil) {
+        if (Q->info.tim == tim) {
+            adrKejadian K = Q->lKejadian.first;
+            while (K != Nil) {
+                if (K->info.jenis == jenis && K->info.menit == menit) {
+                    jumlah++;
+                }
+                K = K->next;
+            }
+        }
+        Q = Q->next;
+    }
+    return jumlah;
+}
+
 bool adaGolRekan(adrPertandingan P, adrPemain C, int menit) {
     adrPemain Q = P->lPemain.first;
     while (Q != Nil) {
@@ -514,10 +533,15 @@ int rapikanAssist(adrPertandingan P) {
         adrKejadian K = C->lKejadian.first;
         while (K != Nil) {
             adrKejadian berikut = K->next;
-            if (K->info.jenis == ASSIST && !adaGolRekan(P, C, K->info.menit)) {
-                lepasKejadian(C, K);
-                delete K;
-                jumlah++;
+            if (K->info.jenis == ASSIST) {
+                bool tanpaGol = !adaGolRekan(P, C, K->info.menit);
+                bool berlebih = hitungKejadianTimMenit(P, C->info.tim, K->info.menit, ASSIST)
+                              > hitungKejadianTimMenit(P, C->info.tim, K->info.menit, GOL);
+                if (tanpaGol || berlebih) {
+                    lepasKejadian(C, K);
+                    delete K;
+                    jumlah++;
+                }
             }
             K = berikut;
         }
@@ -543,8 +567,14 @@ HasilKejadian tambahKejadian(adrPertandingan P, adrPemain C, infoKejadian data) 
     if (data.jenis == KARTU_KUNING && hitungJenisKejadian(C, KARTU_KUNING) >= 2) {
         return KUNING_PENUH;
     }
-    if (data.jenis == ASSIST && !adaGolRekan(P, C, data.menit)) {
-        return ASSIST_TANPA_GOL;
+    if (data.jenis == ASSIST) {
+        if (!adaGolRekan(P, C, data.menit)) {
+            return ASSIST_TANPA_GOL;
+        }
+        if (hitungKejadianTimMenit(P, C->info.tim, data.menit, ASSIST)
+            >= hitungKejadianTimMenit(P, C->info.tim, data.menit, GOL)) {
+            return ASSIST_SUDAH_ADA;
+        }
     }
 
     adrKejadian baru = createKejadian(data);

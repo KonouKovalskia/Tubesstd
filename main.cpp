@@ -245,6 +245,8 @@ void tampilHasilKejadian(HasilKejadian h, adrPertandingan P, adrPemain C, infoKe
         cout << "Ditolak: " << C->info.nama << " sudah memiliki 2 kartu kuning." << endl;
     } else if (h == ASSIST_TANPA_GOL) {
         cout << "Ditolak: assist butuh gol rekan satu tim di menit yang sama. Input gol lebih dulu." << endl;
+    } else if (h == ASSIST_SUDAH_ADA) {
+        cout << "Ditolak: gol pada menit ini sudah memiliki assist." << endl;
     } else {
         cout << "Ditolak: kartu ini membuat pemain keluar sebelum kejadian yang sudah tercatat. "
              << "Hapus kejadian setelah menit keluar lebih dulu." << endl;

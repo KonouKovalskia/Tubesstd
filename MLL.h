@@ -17,7 +17,7 @@ const string GOL_BUNUH_DIRI = "GOL BUNUH DIRI";
 enum HasilInsert { INSERT_OK, ID_KEMBAR, NOMOR_KEMBAR, TIM_SAMA };
 
 enum HasilKejadian { KEJADIAN_OK, MENIT_TIDAK_VALID, KEJADIAN_KEMBAR, PEMAIN_SUDAH_KELUAR,
-                     MERAH_GANDA, KUNING_PENUH, ASSIST_TANPA_GOL, KARTU_BENTROK };
+                     MERAH_GANDA, KUNING_PENUH, ASSIST_TANPA_GOL, ASSIST_SUDAH_ADA, KARTU_BENTROK };
 
 struct infoKejadian {
     int menit;
@@ -114,6 +114,7 @@ int hitungJenisKejadian(adrPemain C, string jenis);
 void hitungSkor(adrPertandingan P, int &skorHome, int &skorAway);
 int menitKartuMerah(adrPemain C);
 int menitKeluar(adrPemain C);
+int hitungKejadianTimMenit(adrPertandingan P, char tim, int menit, string jenis);
 bool adaGolRekan(adrPertandingan P, adrPemain C, int menit);
 HasilKejadian tambahKejadian(adrPertandingan P, adrPemain C, infoKejadian data);
 int rapikanAssist(adrPertandingan P);
