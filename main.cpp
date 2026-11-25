@@ -70,25 +70,6 @@ bool posisiValid(string s) {
     return s == "GK" || s == "DF" || s == "MF" || s == "FW";
 }
 
-bool tanggalValid(string t) {
-    if (t.length() != 10 || t[2] != '-' || t[5] != '-') return false;
-    for (int i = 0; i < 10; i++) {
-        if (i != 2 && i != 5 && (t[i] < '0' || t[i] > '9')) return false;
-    }
-    int hari = (t[0] - '0') * 10 + (t[1] - '0');
-    int bulan = (t[3] - '0') * 10 + (t[4] - '0');
-    int tahun = (t[6] - '0') * 1000 + (t[7] - '0') * 100 + (t[8] - '0') * 10 + (t[9] - '0');
-    if (tahun < 1900 || bulan < 1 || bulan > 12 || hari < 1) return false;
-    int batas = 31;
-    if (bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11) {
-        batas = 30;
-    } else if (bulan == 2) {
-        bool kabisat = (tahun % 4 == 0 && tahun % 100 != 0) || tahun % 400 == 0;
-        batas = kabisat ? 29 : 28;
-    }
-    return hari <= batas;
-}
-
 char inputTim() {
     while (true) {
         string s = toUpperStr(inputString("Tim (H = home / A = away): "));
@@ -122,10 +103,6 @@ string inputJenisKejadian() {
 bool konfirmasi(string prompt) {
     string s = toUpperStr(inputString(prompt + " (y/n): "));
     return s == "Y";
-}
-
-void jeda() {
-    inputString("\nTekan Enter untuk kembali ke menu...");
 }
 
 adrPertandingan pilihPertandingan(ListPertandingan L) {
@@ -174,13 +151,11 @@ void tambahKejadianContoh(adrPertandingan P, adrPemain C, int menit, string jeni
     tambahKejadian(P, C, d);
 }
 
-adrPertandingan tambahPertandinganContoh(ListPertandingan &L, string id, string home, string away,
-                                         string tanggal, string stadion) {
+adrPertandingan tambahPertandinganContoh(ListPertandingan &L, string id, string home, string away, string stadion) {
     infoPertandingan d;
     d.idMatch = id;
     d.timHome = home;
     d.timAway = away;
-    d.tanggal = tanggal;
     d.stadion = stadion;
     adrPertandingan P = createParent(d);
     insertParent(L, P);
@@ -195,7 +170,7 @@ void isiDataContoh(ListPertandingan &L) {
     adrPertandingan P;
     adrPemain C;
 
-    P = tambahPertandinganContoh(L, "M01", "Garuda FC", "Rajawali United", "12-08-2026", "Stadion Si Jalak Harupat");
+    P = tambahPertandinganContoh(L, "M01", "Garuda FC", "Rajawali United", "Stadion Si Jalak Harupat");
     C = tambahPemainContoh(P, 'H', 10, "Andi Saputra", "FW");
     tambahKejadianContoh(P, C, 23, GOL);
     tambahKejadianContoh(P, C, 67, GOL);
@@ -208,7 +183,7 @@ void isiDataContoh(ListPertandingan &L) {
     C = tambahPemainContoh(P, 'A', 5, "Yoga Permana", "DF");
     tambahKejadianContoh(P, C, 30, KARTU_KUNING);
 
-    P = tambahPertandinganContoh(L, "M02", "Banteng Muda", "Garuda FC", "19-08-2026", "Stadion Manahan");
+    P = tambahPertandinganContoh(L, "M02", "Banteng Muda", "Garuda FC", "Stadion Manahan");
     C = tambahPemainContoh(P, 'H', 11, "Bayu Setiawan", "FW");
     tambahKejadianContoh(P, C, 15, GOL);
     C = tambahPemainContoh(P, 'H', 4, "Hendra Wijaya", "DF");
@@ -220,7 +195,7 @@ void isiDataContoh(ListPertandingan &L) {
     C = tambahPemainContoh(P, 'A', 3, "Galih Ramadhan", "DF");
     tambahKejadianContoh(P, C, 88, GOL_BUNUH_DIRI);
 
-    tambahPertandinganContoh(L, "M03", "Harimau Sumatera", "Rajawali United", "26-08-2026", "Stadion Teladan");
+    tambahPertandinganContoh(L, "M03", "Harimau Sumatera", "Rajawali United", "Stadion Teladan");
 
     cout << "Data contoh berhasil dimasukkan: 3 pertandingan, 9 pemain." << endl;
 }
@@ -255,16 +230,25 @@ void tampilHasilKejadian(HasilKejadian h, adrPertandingan P, adrPemain C, infoKe
     }
 }
 
+void isiSkuadOtomatis(adrPertandingan P) {
+    char kodeTim[2] = {'H', 'A'};
+    for (int t = 0; t < 2; t++) {
+        string namaDasar = namaTim(P, kodeTim[t]);
+        for (int no = 1; no <= 11; no++) {
+            string pos = "FW";
+            if (no == 1) pos = "GK";
+            else if (no <= 5) pos = "DF";
+            else if (no <= 8) pos = "MF";
+            tambahPemainContoh(P, kodeTim[t], no, namaDasar + intToStr(no), pos);
+        }
+    }
+}
+
 void menuTambahPertandingan(ListPertandingan &L) {
     infoPertandingan d;
     d.idMatch = toUpperStr(inputWajib("ID pertandingan (contoh: M04): "));
     d.timHome = inputWajib("Tim home: ");
     d.timAway = inputWajib("Tim away: ");
-    d.tanggal = inputWajib("Tanggal (dd-mm-yyyy): ");
-    if (!tanggalValid(d.tanggal)) {
-        cout << "Gagal: format tanggal harus dd-mm-yyyy dan tanggalnya harus ada." << endl;
-        return;
-    }
     d.stadion = inputWajib("Stadion: ");
     if (!cin) return;
 
@@ -272,6 +256,11 @@ void menuTambahPertandingan(ListPertandingan &L) {
     HasilInsert h = insertParent(L, P);
     if (h == INSERT_OK) {
         cout << "Pertandingan " << d.idMatch << " berhasil ditambahkan." << endl;
+        if (konfirmasi("Isi skuad otomatis (11 pemain per tim)?")) {
+            isiSkuadOtomatis(P);
+            cout << "22 pemain otomatis ditambahkan (" << d.timHome << "1..11 & "
+                 << d.timAway << "1..11)." << endl;
+        }
         return;
     }
     delete P;
@@ -532,7 +521,6 @@ int main() {
             cout << endl << "Input berakhir, program ditutup." << endl;
             break;
         }
-        if (pilihan != 0) jeda();
     }
 
     hapusSemua(L);

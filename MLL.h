@@ -59,7 +59,6 @@ struct infoPertandingan {
     string idMatch;
     string timHome;
     string timAway;
-    string tanggal;
     string stadion;
 };
 

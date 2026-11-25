@@ -131,7 +131,6 @@ void printSatuParent(adrPertandingan P) {
     hitungSkor(P, skorHome, skorAway);
     cout << "[" << P->info.idMatch << "] "
          << P->info.timHome << " " << skorHome << " - " << skorAway << " " << P->info.timAway << endl;
-    cout << "      Tanggal : " << P->info.tanggal << endl;
     cout << "      Stadion : " << P->info.stadion << endl;
     cout << "      Pemain  : " << hitungJumlahPemain(P) << " orang tercatat" << endl;
 }
@@ -665,7 +664,6 @@ void printLaporanPertandingan(adrPertandingan P) {
 
     cout << "================ LAPORAN PERTANDINGAN ================" << endl;
     cout << "ID      : " << P->info.idMatch << endl;
-    cout << "Tanggal : " << P->info.tanggal << endl;
     cout << "Stadion : " << P->info.stadion << endl;
     cout << endl;
     cout << "   " << P->info.timHome << "  " << skorHome << " - " << skorAway << "  " << P->info.timAway << endl;

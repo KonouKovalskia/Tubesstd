@@ -15,7 +15,7 @@ Tiga tingkat, semuanya Double Linked List dengan `first` dan `last`.
 
 | Tingkat | Entitas | Atribut |
 | --- | --- | --- |
-| Induk | Pertandingan | idMatch, timHome, timAway, tanggal, stadion |
+| Induk | Pertandingan | idMatch, timHome, timAway, stadion |
 | Anak | Pemain | noPunggung, nama, posisi, tim (H/A) |
 | Cucu | Kejadian | menit, jenis (gol, assist, kartu kuning, kartu merah, gol bunuh diri) |
 
@@ -63,7 +63,7 @@ Dengan Code Blocks: buat project Console application C++ kosong, lalu tambahkan 
 
 ## Aturan Validasi
 
-- ID pertandingan harus unik, tim home dan away tidak boleh sama, tanggal berformat `dd-mm-yyyy` dan harus ada di kalender.
+- ID pertandingan harus unik, tim home dan away tidak boleh sama. Skuad pemain dapat diisi otomatis (11 pemain per tim) saat menambah pertandingan atau ditambah manual.
 - Nomor punggung 1 sampai 99 dan unik per tim dalam satu pertandingan. Posisi hanya GK, DF, MF, FW.
 - Menit kejadian 1 sampai 120. Kejadian yang sama pada menit yang sama untuk pemain yang sama ditolak.
 - Assist hanya diterima kalau ada gol rekan satu tim di menit yang sama, dan setiap gol maksimal memiliki satu assist.
