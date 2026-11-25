@@ -162,42 +162,86 @@ adrPertandingan tambahPertandinganContoh(ListPertandingan &L, string id, string 
     return P;
 }
 
-void isiDataContoh(ListPertandingan &L) {
-    if (findParent(L, "M01") != Nil || findParent(L, "M02") != Nil || findParent(L, "M03") != Nil) {
-        cout << "Data contoh tidak dimasukkan karena ID M01/M02/M03 sudah dipakai." << endl;
-        return;
-    }
+void isiDataDefault(ListPertandingan &L) {
     adrPertandingan P;
-    adrPemain C;
 
-    P = tambahPertandinganContoh(L, "M01", "Garuda FC", "Rajawali United", "Stadion Si Jalak Harupat");
-    C = tambahPemainContoh(P, 'H', 10, "Andi Saputra", "FW");
-    tambahKejadianContoh(P, C, 23, GOL);
-    tambahKejadianContoh(P, C, 67, GOL);
-    C = tambahPemainContoh(P, 'H', 8, "Rizky Pratama", "MF");
-    tambahKejadianContoh(P, C, 23, ASSIST);
-    tambahKejadianContoh(P, C, 55, KARTU_KUNING);
-    C = tambahPemainContoh(P, 'H', 1, "Fajar Nugraha", "GK");
-    C = tambahPemainContoh(P, 'A', 9, "Dimas Ardiansyah", "FW");
-    tambahKejadianContoh(P, C, 81, GOL);
-    C = tambahPemainContoh(P, 'A', 5, "Yoga Permana", "DF");
-    tambahKejadianContoh(P, C, 30, KARTU_KUNING);
+    // M01: Manchester United vs Tottenham Hotspur
+    P = tambahPertandinganContoh(L, "M01", "Manchester United", "Tottenham Hotspur", "Old Trafford");
+    tambahPemainContoh(P, 'H', 1,  "Senne Lammens", "GK");
+    tambahPemainContoh(P, 'H', 2,  "Diogo Dalot", "DF");
+    tambahPemainContoh(P, 'H', 4,  "Matthijs de Ligt", "DF");
+    tambahPemainContoh(P, 'H', 6,  "Lisandro Martinez", "DF");
+    tambahPemainContoh(P, 'H', 13, "Patrick Dorgu", "DF");
+    tambahPemainContoh(P, 'H', 8,  "Bruno Fernandes", "MF");
+    tambahPemainContoh(P, 'H', 25, "Manuel Ugarte", "MF");
+    tambahPemainContoh(P, 'H', 37, "Kobbie Mainoo", "MF");
+    tambahPemainContoh(P, 'H', 10, "Matheus Cunha", "FW");
+    tambahPemainContoh(P, 'H', 19, "Bryan Mbeumo", "FW");
+    tambahPemainContoh(P, 'H', 30, "Benjamin Sesko", "FW");
 
-    P = tambahPertandinganContoh(L, "M02", "Banteng Muda", "Garuda FC", "Stadion Manahan");
-    C = tambahPemainContoh(P, 'H', 11, "Bayu Setiawan", "FW");
-    tambahKejadianContoh(P, C, 15, GOL);
-    C = tambahPemainContoh(P, 'H', 4, "Hendra Wijaya", "DF");
-    tambahKejadianContoh(P, C, 15, ASSIST);
-    tambahKejadianContoh(P, C, 20, KARTU_KUNING);
-    tambahKejadianContoh(P, C, 62, KARTU_KUNING);
-    C = tambahPemainContoh(P, 'A', 10, "Andi Saputra", "FW");
-    tambahKejadianContoh(P, C, 44, GOL);
-    C = tambahPemainContoh(P, 'A', 3, "Galih Ramadhan", "DF");
-    tambahKejadianContoh(P, C, 88, GOL_BUNUH_DIRI);
+    tambahPemainContoh(P, 'A', 1,  "Guglielmo Vicario", "GK");
+    tambahPemainContoh(P, 'A', 23, "Pedro Porro", "DF");
+    tambahPemainContoh(P, 'A', 17, "Cristian Romero", "DF");
+    tambahPemainContoh(P, 'A', 37, "Micky van de Ven", "DF");
+    tambahPemainContoh(P, 'A', 13, "Destiny Udogie", "DF");
+    tambahPemainContoh(P, 'A', 6,  "Joao Palhinha", "MF");
+    tambahPemainContoh(P, 'A', 10, "James Maddison", "MF");
+    tambahPemainContoh(P, 'A', 21, "Dejan Kulusevski", "MF");
+    tambahPemainContoh(P, 'A', 20, "Mohammed Kudus", "FW");
+    tambahPemainContoh(P, 'A', 19, "Dominic Solanke", "FW");
+    tambahPemainContoh(P, 'A', 11, "Mathys Tel", "FW");
 
-    tambahPertandinganContoh(L, "M03", "Harimau Sumatera", "Rajawali United", "Stadion Teladan");
+    // M02: Manchester City vs Liverpool
+    P = tambahPertandinganContoh(L, "M02", "Manchester City", "Liverpool", "Etihad Stadium");
+    tambahPemainContoh(P, 'H', 25, "Gianluigi Donnarumma", "GK");
+    tambahPemainContoh(P, 'H', 27, "Matheus Nunes", "DF");
+    tambahPemainContoh(P, 'H', 3,  "Ruben Dias", "DF");
+    tambahPemainContoh(P, 'H', 24, "Josko Gvardiol", "DF");
+    tambahPemainContoh(P, 'H', 21, "Rayan Ait-Nouri", "DF");
+    tambahPemainContoh(P, 'H', 16, "Rodri", "MF");
+    tambahPemainContoh(P, 'H', 4,  "Tijjani Reijnders", "MF");
+    tambahPemainContoh(P, 'H', 20, "Bernardo Silva", "MF");
+    tambahPemainContoh(P, 'H', 11, "Jeremy Doku", "FW");
+    tambahPemainContoh(P, 'H', 9,  "Erling Haaland", "FW");
+    tambahPemainContoh(P, 'H', 7,  "Omar Marmoush", "FW");
 
-    cout << "Data contoh berhasil dimasukkan: 3 pertandingan, 9 pemain." << endl;
+    tambahPemainContoh(P, 'A', 1,  "Alisson Becker", "GK");
+    tambahPemainContoh(P, 'A', 30, "Jeremie Frimpong", "DF");
+    tambahPemainContoh(P, 'A', 5,  "Ibrahima Konate", "DF");
+    tambahPemainContoh(P, 'A', 4,  "Virgil van Dijk", "DF");
+    tambahPemainContoh(P, 'A', 6,  "Milos Kerkez", "DF");
+    tambahPemainContoh(P, 'A', 38, "Ryan Gravenberch", "MF");
+    tambahPemainContoh(P, 'A', 10, "Alexis Mac Allister", "MF");
+    tambahPemainContoh(P, 'A', 8,  "Dominik Szoboszlai", "MF");
+    tambahPemainContoh(P, 'A', 11, "Mohamed Salah", "FW");
+    tambahPemainContoh(P, 'A', 22, "Hugo Ekitike", "FW");
+    tambahPemainContoh(P, 'A', 18, "Cody Gakpo", "FW");
+
+    // M03: Arsenal vs Chelsea
+    P = tambahPertandinganContoh(L, "M03", "Arsenal", "Chelsea", "Emirates Stadium");
+    tambahPemainContoh(P, 'H', 1,  "David Raya", "GK");
+    tambahPemainContoh(P, 'H', 4,  "Ben White", "DF");
+    tambahPemainContoh(P, 'H', 2,  "William Saliba", "DF");
+    tambahPemainContoh(P, 'H', 6,  "Gabriel Magalhaes", "DF");
+    tambahPemainContoh(P, 'H', 12, "Jurrien Timber", "DF");
+    tambahPemainContoh(P, 'H', 41, "Declan Rice", "MF");
+    tambahPemainContoh(P, 'H', 8,  "Martin Odegaard", "MF");
+    tambahPemainContoh(P, 'H', 23, "Mikel Merino", "MF");
+    tambahPemainContoh(P, 'H', 7,  "Bukayo Saka", "FW");
+    tambahPemainContoh(P, 'H', 14, "Viktor Gyokeres", "FW");
+    tambahPemainContoh(P, 'H', 11, "Gabriel Martinelli", "FW");
+
+    tambahPemainContoh(P, 'A', 1,  "Robert Sanchez", "GK");
+    tambahPemainContoh(P, 'A', 24, "Reece James", "DF");
+    tambahPemainContoh(P, 'A', 29, "Wesley Fofana", "DF");
+    tambahPemainContoh(P, 'A', 6,  "Levi Colwill", "DF");
+    tambahPemainContoh(P, 'A', 3,  "Marc Cucurella", "DF");
+    tambahPemainContoh(P, 'A', 25, "Moises Caicedo", "MF");
+    tambahPemainContoh(P, 'A', 8,  "Enzo Fernandez", "MF");
+    tambahPemainContoh(P, 'A', 10, "Cole Palmer", "MF");
+    tambahPemainContoh(P, 'A', 7,  "Pedro Neto", "FW");
+    tambahPemainContoh(P, 'A', 20, "Joao Pedro", "FW");
+    tambahPemainContoh(P, 'A', 15, "Nicolas Jackson", "FW");
 }
 
 void tampilHasilKejadian(HasilKejadian h, adrPertandingan P, adrPemain C, infoKejadian d) {
@@ -460,36 +504,65 @@ void menuRekapPemain(ListPertandingan L) {
     cariPemainSemuaPertandingan(L, nama, tim, noPunggung);
 }
 
+void jedaSingkat(int skala) {
+    volatile long sink = 0;
+    for (int i = 0; i < skala; i++) {
+        for (int j = 0; j < 2000000; j++) {
+            sink += j;
+        }
+    }
+}
+
+void tampilMenu() {
+    cout << endl;
+    cout << "+=============================================+" << endl;
+    cout << "|            FOOTBALL MATCH CENTER            |" << endl;
+    cout << "+=============================================+" << endl;
+    cout << "| -- Pertandingan (Parent) --                 |" << endl;
+    cout << "|   1. Tambah pertandingan                    |" << endl;
+    cout << "|   2. Tampilkan daftar pertandingan          |" << endl;
+    cout << "|   3. Cari pertandingan (ID / nama tim)      |" << endl;
+    cout << "|   4. Hapus pertandingan                     |" << endl;
+    cout << "| -- Pemain (Child) --                        |" << endl;
+    cout << "|   5. Tambah pemain ke pertandingan          |" << endl;
+    cout << "|   6. Tampilkan pemain pada pertandingan     |" << endl;
+    cout << "|   7. Cari pemain pada pertandingan          |" << endl;
+    cout << "|   8. Hapus pemain dari pertandingan         |" << endl;
+    cout << "| -- Kejadian (Grandchild) --                 |" << endl;
+    cout << "|   9. Tambah kejadian (gol/assist/kartu)     |" << endl;
+    cout << "|  10. Hapus kejadian                         |" << endl;
+    cout << "| -- Lainnya --                               |" << endl;
+    cout << "|  11. Tampilkan seluruh data (printAll)      |" << endl;
+    cout << "|  12. Laporan pertandingan (skor otomatis)   |" << endl;
+    cout << "|  13. Timeline pertandingan                  |" << endl;
+    cout << "|  14. Top scorer pertandingan                |" << endl;
+    cout << "|  15. Rekap pemain di semua pertandingan     |" << endl;
+    cout << "|   0. Keluar                                 |" << endl;
+    cout << "+=============================================+" << endl;
+}
+
+void animasiPembuka() {
+    cout << endl;
+    cout << "+=============================================+" << endl;
+    jedaSingkat(3);
+    cout << "|       FOOTBALL MATCH CENTER - MLL C++       |" << endl;
+    jedaSingkat(3);
+    cout << "|         Pertandingan > Pemain > Event       |" << endl;
+    jedaSingkat(3);
+    cout << "+=============================================+" << endl;
+    jedaSingkat(4);
+}
+
 int main() {
     ListPertandingan L;
     createList(L);
+    isiDataDefault(L);
+
+    animasiPembuka();
 
     int pilihan = -1;
     while (pilihan != 0) {
-        cout << endl;
-        cout << "============ FOOTBALL MATCH CENTER ============" << endl;
-        cout << " -- Pertandingan (Parent) --" << endl;
-        cout << "  1. Tambah pertandingan" << endl;
-        cout << "  2. Tampilkan daftar pertandingan" << endl;
-        cout << "  3. Cari pertandingan (ID / nama tim)" << endl;
-        cout << "  4. Hapus pertandingan" << endl;
-        cout << " -- Pemain (Child) --" << endl;
-        cout << "  5. Tambah pemain ke pertandingan" << endl;
-        cout << "  6. Tampilkan pemain pada pertandingan" << endl;
-        cout << "  7. Cari pemain pada pertandingan" << endl;
-        cout << "  8. Hapus pemain dari pertandingan" << endl;
-        cout << " -- Kejadian (Grandchild) --" << endl;
-        cout << "  9. Tambah kejadian (gol/assist/kartu)" << endl;
-        cout << " 10. Hapus kejadian" << endl;
-        cout << " -- Lainnya --" << endl;
-        cout << " 11. Tampilkan seluruh data (printAll)" << endl;
-        cout << " 12. Laporan pertandingan (skor otomatis)" << endl;
-        cout << " 13. Timeline pertandingan" << endl;
-        cout << " 14. Top scorer pertandingan" << endl;
-        cout << " 15. Rekap pemain di semua pertandingan" << endl;
-        cout << " 16. Isi data contoh" << endl;
-        cout << "  0. Keluar" << endl;
-        cout << "===============================================" << endl;
+        tampilMenu();
         pilihan = inputInt("Pilih menu: ");
         if (!cin) {
             cout << endl << "Input berakhir, program ditutup." << endl;
@@ -513,7 +586,6 @@ int main() {
             case 13: menuTimeline(L); break;
             case 14: menuTopScorer(L); break;
             case 15: menuRekapPemain(L); break;
-            case 16: isiDataContoh(L); break;
             case 0:  cout << "Terima kasih!" << endl; break;
             default: cout << "Menu tidak tersedia." << endl;
         }

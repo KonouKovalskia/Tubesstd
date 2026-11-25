@@ -59,7 +59,8 @@ Dengan Code Blocks: buat project Console application C++ kosong, lalu tambahkan 
 | 13 | Timeline pertandingan |
 | 14 | Top scorer pertandingan |
 | 15 | Rekap pemain di semua pertandingan |
-| 16 | Isi data contoh |
+
+Secara default saat program dijalankan, 3 pertandingan awal (`M01`: Manchester United vs Tottenham Hotspur, `M02`: Manchester City vs Liverpool, `M03`: Arsenal vs Chelsea) beserta starting eleven masing-masing tim (66 pemain) sudah otomatis dimuat.
 
 ## Aturan Validasi
 

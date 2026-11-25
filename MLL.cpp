@@ -662,7 +662,9 @@ void printLaporanPertandingan(adrPertandingan P) {
         C = C->next;
     }
 
-    cout << "================ LAPORAN PERTANDINGAN ================" << endl;
+    cout << "+======================================================+" << endl;
+    cout << "|                 LAPORAN PERTANDINGAN                 |" << endl;
+    cout << "+======================================================+" << endl;
     cout << "ID      : " << P->info.idMatch << endl;
     cout << "Stadion : " << P->info.stadion << endl;
     cout << endl;
