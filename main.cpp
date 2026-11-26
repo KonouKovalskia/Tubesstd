@@ -5,16 +5,11 @@ int main() {
     createList(L);
     isiDataDefault(L);
 
-    animasiPembuka();
-
     int pilihan = -1;
     while (pilihan != 0) {
         tampilMenu();
         pilihan = inputInt("Pilih menu: ");
-        if (!cin) {
-            cout << endl << "Input berakhir, program ditutup." << endl;
-            break;
-        }
+        if (!cin) break;
         cout << endl;
 
         switch (pilihan) {
@@ -23,23 +18,19 @@ int main() {
             case 3:  menuCariPertandingan(L); break;
             case 4:  menuHapusPertandingan(L); break;
             case 5:  menuTambahPemain(L); break;
-            case 6:  menuTampilPemain(L); break;
+            case 6:  printChild(pilihPertandingan(L)); break;
             case 7:  menuCariPemain(L); break;
             case 8:  menuHapusPemain(L); break;
             case 9:  menuTambahKejadian(L); break;
             case 10: menuHapusKejadian(L); break;
             case 11: menuRelasiParentChild(L); break;
             case 12: printAll(L); break;
-            case 13: menuLaporan(L); break;
-            case 14: menuTimeline(L); break;
-            case 15: menuTopScorer(L); break;
+            case 13: printLaporanPertandingan(pilihPertandingan(L)); break;
+            case 14: printTimeline(pilihPertandingan(L)); break;
+            case 15: printTopScorer(pilihPertandingan(L)); break;
             case 16: menuRekapPemain(L); break;
             case 0:  cout << "Terima kasih!" << endl; break;
             default: cout << "Menu tidak tersedia." << endl;
-        }
-        if (!cin) {
-            cout << endl << "Input berakhir, program ditutup." << endl;
-            break;
         }
     }
 
