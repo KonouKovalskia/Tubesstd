@@ -104,9 +104,13 @@ adrKejadian findKejadianKe(adrPemain C, int urutan);
 void printKejadian(adrPemain C);
 
 void printAll(ListPertandingan L);
+void printRelasiParentChild(ListPertandingan L);
 
 void printSatuParent(adrPertandingan P);
+void printSkorPertandingan(adrPertandingan P, string label);
 string namaTim(adrPertandingan P, char tim);
+int hitungJumlahParent(ListPertandingan L);
+int hitungJumlahPemainTim(adrPertandingan P, char tim);
 int hitungJumlahPemain(adrPertandingan P);
 int hitungJenisKejadian(adrPemain C, string jenis);
 void hitungSkor(adrPertandingan P, int &skorHome, int &skorAway);
@@ -123,6 +127,45 @@ void cariPemainSemuaPertandingan(ListPertandingan L, string nama, string tim, in
 void hapusSemua(ListPertandingan &L);
 
 string toLowerStr(string s);
+string toUpperStr(string s);
 string intToStr(int x);
+string potong(string s);
+bool keAngka(string s, int &hasil);
+bool posisiValid(string s);
+
+string inputString(string prompt);
+string inputWajib(string prompt);
+int inputInt(string prompt);
+char inputTim();
+string inputJenisKejadian();
+bool konfirmasi(string prompt);
+adrPertandingan pilihPertandingan(ListPertandingan L);
+adrPemain pilihPemain(adrPertandingan P, bool tampilkanDaftar);
+
+adrPemain tambahPemainContoh(adrPertandingan P, char tim, int no, string nama, string posisi);
+void tambahKejadianContoh(adrPertandingan P, adrPemain C, int menit, string jenis);
+adrPertandingan tambahPertandinganContoh(ListPertandingan &L, string id, string home, string away, string stadion);
+void isiDataDefault(ListPertandingan &L);
+void isiSkuadOtomatis(adrPertandingan P);
+void tampilHasilKejadian(HasilKejadian h, adrPertandingan P, adrPemain C, infoKejadian d);
+
+void menuTambahPertandingan(ListPertandingan &L);
+void menuCariPertandingan(ListPertandingan L);
+void menuHapusPertandingan(ListPertandingan &L);
+void menuTambahPemain(ListPertandingan &L);
+void menuTampilPemain(ListPertandingan L);
+void menuCariPemain(ListPertandingan L);
+void menuHapusPemain(ListPertandingan &L);
+void menuTambahKejadian(ListPertandingan &L);
+void menuHapusKejadian(ListPertandingan &L);
+void menuRelasiParentChild(ListPertandingan L);
+void menuLaporan(ListPertandingan L);
+void menuTimeline(ListPertandingan L);
+void menuTopScorer(ListPertandingan L);
+void menuRekapPemain(ListPertandingan L);
+
+void jedaSingkat(int skala);
+void tampilMenu();
+void animasiPembuka();
 
 #endif
