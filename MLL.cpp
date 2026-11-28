@@ -249,9 +249,21 @@ int rapikanAssist(adrPertandingan P) {
         adrKejadian K = C->lKejadian.first;
         while (K != Nil) {
             adrKejadian nextK = K->next;
-            if (K->info.jenis == ASSIST && (!adaGolRekan(P, C, K->info.menit) ||
+            if (K->info.jenis == ASSIST && !adaGolRekan(P, C, K->info.menit)) {
+                lepasKejadian(C, K);
+                delete K;
+                n++;
+            }
+            K = nextK;
+        }
+    }
+    for (adrPemain C = P->lPemain.first; C != Nil; C = C->next) {
+        adrKejadian K = C->lKejadian.first;
+        while (K != Nil) {
+            adrKejadian nextK = K->next;
+            if (K->info.jenis == ASSIST &&
                 hitungKejadianTimMenit(P, C->info.tim, K->info.menit, ASSIST) >
-                hitungKejadianTimMenit(P, C->info.tim, K->info.menit, GOL))) {
+                hitungKejadianTimMenit(P, C->info.tim, K->info.menit, GOL)) {
                 lepasKejadian(C, K);
                 delete K;
                 n++;
