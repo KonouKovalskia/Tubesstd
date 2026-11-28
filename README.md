@@ -8,6 +8,7 @@ Tugas Besar Struktur Data, kelompok ONE. Program C++ untuk mencatat pertandingan
 | --- | --- |
 | Muhamad Alfi Syahrin | 103032400057 |
 | Muhammad Faiz Ghiffari | 103032400002 |
+| Fahrio Hasnal Mubarik | 103032400038 |
 
 ## Struktur Data
 
