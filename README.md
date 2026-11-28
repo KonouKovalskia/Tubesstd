@@ -12,7 +12,7 @@ Tugas Besar Struktur Data, kelompok ONE. Program C++ untuk mencatat pertandingan
 
 ## Struktur Data
 
-Tiga tingkat, semuanya Double Linked List dengan `first` dan `last`.
+Tiga tingkat, semuanya Singly Linked List. Setiap list hanya punya `first` dan setiap elemen hanya punya `next`.
 
 | Tingkat | Entitas | Atribut |
 | --- | --- | --- |
@@ -62,11 +62,11 @@ Dengan Code Blocks: buat project Console application C++ kosong, lalu tambahkan 
 | 15 | Top scorer pertandingan |
 | 16 | Rekap pemain di semua pertandingan |
 
-Secara default saat program dijalankan, 3 pertandingan awal (`M01`: Manchester United vs Tottenham Hotspur, `M02`: Manchester City vs Liverpool, `M03`: Arsenal vs Chelsea) beserta starting eleven masing-masing tim (66 pemain) sudah otomatis dimuat.
+Saat program dijalankan, 3 pertandingan awal (`M01`: Manchester United vs Tottenham Hotspur, `M02`: Manchester City vs Liverpool, `M03`: Arsenal vs Chelsea) beserta 12 pemain (2 per tim) otomatis dimuat tanpa kejadian.
 
 ## Aturan Validasi
 
-- ID pertandingan harus unik, tim home dan away tidak boleh sama. Skuad pemain dapat diisi otomatis (11 pemain per tim) saat menambah pertandingan atau ditambah manual.
+- ID pertandingan harus unik, tim home dan away tidak boleh sama.
 - Nomor punggung 1 sampai 99 dan unik per tim dalam satu pertandingan. Posisi hanya GK, DF, MF, FW.
 - Menit kejadian 1 sampai 120. Kejadian yang sama pada menit yang sama untuk pemain yang sama ditolak.
 - Assist hanya diterima kalau ada gol rekan satu tim di menit yang sama, dan setiap gol maksimal memiliki satu assist.
