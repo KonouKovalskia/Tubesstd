@@ -571,10 +571,20 @@ void menuTambahPemain(ListPertandingan &L) {
 
 void menuCariPemain(ListPertandingan L) {
     adrPertandingan P = pilihPertandingan(L);
-    if (!P || P->lPemain.first == Nil) return;
+    if (!P) return;
+    if (P->lPemain.first == Nil) { cout << "Belum ada pemain." << endl; return; }
     int p = inputInt("Cari by (1. Tim & No / 2. Nama): ");
-    adrPemain C = (p == 1) ? pilihPemain(P, false) : (p == 2 ? findChildNama(P, inputWajib("Nama: ")) : Nil);
-    if (!C) { cout << "Pemain tidak ditemukan." << endl; return; }
+    adrPemain C = Nil;
+    if (p == 1) {
+        C = pilihPemain(P, false);
+        if (!C) return;
+    } else if (p == 2) {
+        C = findChildNama(P, inputWajib("Nama: "));
+        if (!C) { cout << "Pemain tidak ditemukan." << endl; return; }
+    } else {
+        cout << "Pilihan tidak valid." << endl;
+        return;
+    }
     cout << "[" << C->info.tim << "] #" << C->info.noPunggung << " " << C->info.nama << " (" << C->info.posisi << ")" << endl;
     printKejadian(C);
 }
